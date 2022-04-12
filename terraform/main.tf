@@ -26,3 +26,24 @@ resource "azurerm_public_ip" "public_ip" {
     prevent_destroy = true
   }
 }
+
+resource "azurerm_storage_account" "storage_account" {
+  name                     = var.azure.storage_account
+  resource_group_name      = azurerm_resource_group.k8s_resource_group.name
+  location                 = var.azure.location
+  account_tier             = "Standard"
+  account_replication_type = "LRS"
+  tags                     = var.tags
+}
+
+resource "azurerm_storage_container" "essentials" {
+  name                  = var.azure.storage_container_essentials
+  storage_account_name  = azurerm_storage_account.storage_account.name
+  container_access_type = "private"
+}
+
+resource "azurerm_storage_container" "magnifik" {
+  name                  = var.azure.storage_container_magnifik
+  storage_account_name  = azurerm_storage_account.storage_account.name
+  container_access_type = "private"
+}
