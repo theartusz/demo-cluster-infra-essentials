@@ -2,7 +2,9 @@
 config ?= variables.tfvars.json
 subscription_id := $(shell jq -r '.azure.subscription_id' $(config))
 app_name := $(shell jq -r '.app_name' $(config))
-
+container := $(shell jq -r '.azure.storage_container_essentials' $(config))
+storage_account := $(shell jq -r '.azure.storage_account' $(config))
+state_backup_key := $(shell jq -r '.azure.state_bacup_key' $(config))
 # without . azure would be executed as first if just executing make
 .azure:
 	$(eval subscription_name := $(shell az account show --subscription $(subscription_id) | jq -r '.name'))
@@ -28,6 +30,7 @@ plan: .azure
 		-out=terraform-plan
 
 apply:
+	@az storage blob snapshot --name $(state_backup_key) --container-name $(container) --account-name $(storage_account)
 	terraform apply terraform-plan
 	@kubectl config set-cluster no-context
 
