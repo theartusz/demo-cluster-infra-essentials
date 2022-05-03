@@ -8,7 +8,7 @@ state_backup_key := $(shell jq -r '.azure.state_bacup_key' $(config))
 # without . azure would be executed as first if just executing make
 .azure:
 	$(eval subscription_name := $(shell az account show --subscription $(subscription_id) | jq -r '.name'))
-	echo "logging into $(subscription_name) with subscription_id: $(subscription_id)"
+	@echo "logging into $(subscription_name) with subscription_id: $(subscription_id)"
 	@az account show > /dev/null || \
 	az login > /dev/null && \
 	az account set --subscription $(subscription_id)
@@ -30,7 +30,6 @@ plan: .azure
 		-out=terraform-plan
 
 apply:
-	@az storage blob snapshot --name $(state_backup_key) --container-name $(container) --account-name $(storage_account)
 	terraform apply terraform-plan
 	@kubectl config set-cluster no-context
 

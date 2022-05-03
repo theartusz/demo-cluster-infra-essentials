@@ -8,10 +8,6 @@ resource "azurerm_dns_zone" "dns_zone" {
   name                = var.azure.dns_zone_name
   resource_group_name = azurerm_resource_group.k8s_resource_group.name
   tags                = var.tags
-
-  lifecycle {
-    prevent_destroy = true
-  }
 }
 
 resource "azurerm_public_ip" "public_ip" {
@@ -21,10 +17,6 @@ resource "azurerm_public_ip" "public_ip" {
   allocation_method   = "Static"
   sku                 = "Basic"
   tags                = var.tags
-
-  lifecycle {
-    prevent_destroy = true
-  }
 }
 
 resource "azurerm_storage_account" "storage_account" {
@@ -47,9 +39,3 @@ resource "azurerm_storage_container" "magnifik" {
   storage_account_name  = azurerm_storage_account.storage_account.name
   container_access_type = "private"
 }
-
-#resource "azurerm_storage_container" "test" {
-#  name                  = "ping"
-#  storage_account_name  = azurerm_storage_account.storage_account.name
-#  container_access_type = "private"
-#}
